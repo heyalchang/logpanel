@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { formatTime } from "@/lib/utils";
 import type { Log } from "@shared/schema";
+import { useEffect, useRef } from "react";
 
 interface LogTableProps {
   logs: Log[];
@@ -8,6 +9,14 @@ interface LogTableProps {
 }
 
 export default function LogTable({ logs, onLogSelect }: LogTableProps) {
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when new logs are added
+  useEffect(() => {
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollTop = tableContainerRef.current.scrollHeight;
+    }
+  }, [logs]);
   const getLevelBadgeClass = (level: string) => {
     switch (level) {
       case 'INFO':

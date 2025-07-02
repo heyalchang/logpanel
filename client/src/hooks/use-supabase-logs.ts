@@ -208,7 +208,9 @@ export const useCreateDemoRun = () => {
 
   return useMutation({
     mutationFn: async (appType: string) => {
-      const runId = `${appType}-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)}`;
+      // Generate run ID with second-level precision (YYYY-MM-DDTHH-MM-SS)
+      const isoSeconds = new Date().toISOString().split('.')[0].replace(/[:]/g, '-');
+      const runId = `${appType}-${isoSeconds}`;
       
       const demoLogs = getDemoLogs(appType);
       const createdLogs = [];
@@ -285,6 +287,34 @@ function getDemoLogs(appType: string) {
       { level: 'INFO', message: 'Data export job started', data: { job_id: 'job_12347', export_type: 'csv', record_count: 1500 }},
       { level: 'WARN', message: 'Queue size growing: 25 pending jobs', data: { queue_size: 25, threshold: 20 }},
       { level: 'INFO', message: 'Batch job completed: 50 emails sent', data: { batch_id: 'batch_001', success_count: 48, failed_count: 2 }},
+    ],
+    'mobile-app': [
+      { level: 'INFO', message: 'App launched on iOS', data: { platform: 'iOS', version: '1.4.2', device: 'iPhone 15 Pro' }},
+      { level: 'INFO', message: 'User signed in', data: { user_id: 'user_987', auth_method: 'oauth_google' }},
+      { level: 'INFO', message: 'Fetching feed items', data: { endpoint: '/v1/feed', network: 'wifi' }},
+      { level: 'WARN', message: 'Slow image download', data: { url: 'https://cdn.example.com/img/abc.jpg', duration_ms: 2200 }},
+      { level: 'INFO', message: 'Push notification received', data: { notification_id: 'notif_123', action: 'open_article' }},
+      { level: 'ERROR', message: 'Unhandled exception in reducer', data: { error: 'TypeError: undefined is not an object', screen: 'Home' }},
+      { level: 'INFO', message: 'Crashlytics report sent', data: { report_id: 'crash_456', size_kb: 78 }},
+      { level: 'INFO', message: 'In-app purchase completed', data: { sku: 'pro_upgrade', price: 4.99, currency: 'USD' }},
+      { level: 'INFO', message: 'WebSocket connected', data: { uri: 'wss://realtime.example.com', ping_ms: 36 }},
+      { level: 'WARN', message: 'Battery level low', data: { level: 15, is_charging: false }},
+      { level: 'INFO', message: 'Background fetch finished', data: { task: 'sync_offline_data', records_synced: 42 }},
+      { level: 'INFO', message: 'App moved to background', data: { timestamp: new Date().toISOString() }},
+    ],
+    'iot-device': [
+      { level: 'INFO', message: 'Sensor node boot sequence started', data: { firmware: '3.2.0', node_id: 'sensor-21' }},
+      { level: 'INFO', message: 'GPS lock acquired', data: { sats: 7, latitude: 37.7749, longitude: -122.4194 }},
+      { level: 'WARN', message: 'Temperature nearing threshold', data: { value_c: 68, threshold_c: 70 }},
+      { level: 'INFO', message: 'MQTT message published', data: { topic: 'devices/21/telemetry', payload_bytes: 128 }},
+      { level: 'ERROR', message: 'LoRaWAN transmission failed', data: { error: 'timeout', retries: 3 }},
+      { level: 'INFO', message: 'Reboot scheduled after update', data: { update_id: 'fw_774', eta_sec: 45 }},
+      { level: 'INFO', message: 'Battery voltage reported', data: { voltage_mv: 3710, percentage: 82 }},
+      { level: 'WARN', message: 'Packet loss high', data: { loss_pct: 12, window_sec: 300 }},
+      { level: 'INFO', message: 'OTA update downloaded', data: { bytes: 1048576, duration_ms: 52000 }},
+      { level: 'INFO', message: 'Diagnostics heartbeat sent', data: { seq: 1523, uptime_sec: 86400 }},
+      { level: 'INFO', message: 'Entered deep sleep', data: { expected_wake_ms: 900000 }},
+      { level: 'INFO', message: 'Woke from sleep', data: { reason: 'timer', rssi_dbm: -72 }},
     ]
   };
 

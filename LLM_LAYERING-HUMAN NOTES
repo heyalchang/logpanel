@@ -1,0 +1,27 @@
+Speed depends on what “unit of progress” you measure, but experience so far looks like this:
+
+1. Burst iterations are dramatically faster  
+   • A schema tweak, service adaptor, and UI change can land in **minutes**, because three LLM agents fire in parallel and CI merges the first green set.  
+   • Humans doing the same dance normally run in series: DBA->API->frontend; that can be hours or days.
+
+2. Conflict resolution is cheaper  
+   • The compiler and tests arbitrate instantly; no cross-team Slack threads.  
+   • When an interface mismatch slips through, regenerating one side is a 30-second prompt, not a half-day Jira ticket.
+
+3. Overhead is fixed but predictable  
+   • Spinning up three models, running `tsc`, Jest, Cypress—​that’s maybe **1-3 minutes** of CI per loop.  
+   • The time cost is constant regardless of feature size, so as scope grows the relative overhead shrinks.
+
+4. Human review still gates quality  
+   • You’ll still want a person to read PRs (especially schema changes) and click “merge.”  
+   • That human gate is now the longest pole; everything before it can run 24×7.
+
+5. When it’s *slower* than humans  
+   • Very small, one-off tweaks (change a label, bump a color) can feel heavier because you’re updating version numbers, running CI, etc.  
+   • Ambiguous specs: if the story is fuzzy the three agents may diverge; humans might have clarified verbally in seconds.
+
+6. Net rule of thumb  
+   • Features that cut across layers (new entities, permissions, analytics) are **2-10× faster** with the contract-split LLM approach.  
+   • Pure presentation tweaks are **about equal** in speed—humans or a single UI-focused LLM may be simpler.  
+
+In practice teams start with LLMs handling the repetitive, cross-layer plumbing, then humans step in for product sense and visual polish.  The process doesn’t remove humans; it removes *waiting*.

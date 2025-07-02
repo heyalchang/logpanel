@@ -72,7 +72,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/demo/:appType", async (req, res) => {
     try {
       const { appType } = req.params;
-      const runId = `${appType}-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)}`;
+      const isoSeconds = new Date().toISOString().split('.')[0].replace(/[:]/g, '-');
+      const runId = `${appType}-${isoSeconds}`;
       
       const demoLogs = getDemoLogs(appType);
       const createdLogs = [];

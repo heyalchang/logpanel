@@ -6,6 +6,7 @@ import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
 import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
+import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs, useTestConnection } from "@/hooks/use-supabase-logs";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
@@ -72,7 +73,7 @@ export default function LogViewer() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-vscode-bg text-vscode-text overflow-hidden">
+    <div className="h-screen flex flex-col bg-vscode-bg text-vscode-text overflow-auto">
       {/* Title Bar */}
       <div className="bg-vscode-panel border-b border-vscode-border px-4 py-2 flex items-center justify-between select-none">
         <div className="flex items-center space-x-3">
@@ -80,7 +81,10 @@ export default function LogViewer() {
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
         </div>
-        <div className="text-sm font-medium">ASA - Any-Source-Anywhere Log Viewer</div>
+        <div className="text-sm font-medium flex items-center space-x-4">
+          <span>ASA Log Viewer</span>
+          <a href="/server-test" className="text-vscode-accent underline text-xs">Server Test</a>
+        </div>
         <div className="w-16"></div>
       </div>
 
@@ -156,6 +160,9 @@ export default function LogViewer() {
         isOpen={!!selectedLog}
         onClose={() => setSelectedLog(null)}
       />
+
+      {/* Floating test data generator */}
+      <FloatingTestPanel />
     </div>
   );
 }

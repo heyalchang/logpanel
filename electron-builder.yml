@@ -1,0 +1,24 @@
+appId: com.yourcompany.logpanel
+productName: LogPanel
+directories:
+  output: dist-electron
+files:
+  - electron/**/*
+  - dist/**/*
+  - package.json
+extraResources:
+  - from: client/public/favicon.ico
+    to: favicon.ico
+mac:
+  category: public.app-category.developer-tools
+  icon: client/public/favicon.ico
+win:
+  target: nsis
+  icon: client/public/favicon.ico
+linux:
+  target: AppImage
+  category: Development
+  icon: client/public/favicon.ico
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

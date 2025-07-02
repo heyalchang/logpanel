@@ -3,11 +3,31 @@ import { supabase } from '@/lib/supabase';
 import type { Log, InsertLog } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 
-// First, let's create the table if it doesn't exist
+// Initialize the database table
 export const useInitializeDatabase = () => {
   return useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.rpc('create_logs_table', {});
+      // Create the logs table using SQL
+      const { error } = await supabase.rpc('exec_sql', {
+        sql: `
+          CREATE TABLE IF NOT EXISTS logs (
+            id bigserial PRIMARY KEY,
+            created_at timestamptz NOT NULL DEFAULT now(),
+            level text NOT NULL CHECK (level IN ('INFO', 'WARN', 'ERROR')),
+            message text NOT NULL,
+            data jsonb,
+            run_id text NOT NULL DEFAULT 'demo-run'
+          );
+          
+          -- Enable Row Level Security
+          ALTER TABLE logs ENABLE ROW LEVEL SECURITY;
+          
+          -- Create a policy that allows all operations for now
+          DROP POLICY IF EXISTS "Allow all operations" ON logs;
+          CREATE POLICY "Allow all operations" ON logs FOR ALL USING (true);
+        `
+      });
+      
       if (error && !error.message.includes('already exists')) {
         throw error;
       }

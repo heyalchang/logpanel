@@ -1,28 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { formatTime, formatDuration } from "@/lib/utils";
+import { useRunStatistics } from "@/hooks/use-supabase-logs";
 
 interface LogStatisticsProps {
   runId: string | null;
 }
 
 export default function LogStatistics({ runId }: LogStatisticsProps) {
-  const { data: stats } = useQuery({
-    queryKey: ['/api/runs', runId, 'stats'],
-    enabled: !!runId,
-    queryFn: async () => {
-      if (!runId) return null;
-      const response = await fetch(`/api/runs/${runId}/stats`, {
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch run statistics');
-      }
-      
-      return response.json();
-    },
-    refetchInterval: 1000, // Update every second for duration
-  });
+  const { data: stats } = useRunStatistics(runId);
 
   if (!runId || !stats) {
     return (

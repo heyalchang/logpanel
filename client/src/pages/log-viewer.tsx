@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LogTable from "@/components/log-table";
@@ -6,7 +6,8 @@ import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
 import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
-import { useRuns, useLogs, useClearLogs } from "@/hooks/use-supabase-logs";
+import { useRuns, useLogs, useClearLogs, useTestConnection } from "@/hooks/use-supabase-logs";
+import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
 
 export default function LogViewer() {
@@ -14,10 +15,28 @@ export default function LogViewer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevels, setSelectedLevels] = useState<string[]>(['INFO', 'WARN', 'ERROR']);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
+  const { toast } = useToast();
 
+  const testConnection = useTestConnection();
   const { data: runs = [] } = useRuns();
   const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
   const clearLogsMutation = useClearLogs();
+
+  // Test Supabase connection on mount
+  useEffect(() => {
+    testConnection.mutate(undefined, {
+      onSuccess: () => {
+        console.log('Successfully connected to Supabase');
+      },
+      onError: (error: any) => {
+        toast({
+          title: "Connection Error",
+          description: `Failed to connect to Supabase: ${error.message}`,
+          variant: "destructive",
+        });
+      },
+    });
+  }, []);
 
   // Set initial run if not selected
   if (!selectedRunId && runs.length > 0) {

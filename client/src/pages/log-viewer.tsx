@@ -83,7 +83,6 @@ export default function LogViewer() {
         </div>
         <div className="text-sm font-medium flex items-center space-x-4">
           <span>ASA Log Viewer</span>
-          <a href="/server-test" className="text-vscode-accent underline text-xs">Server Test</a>
         </div>
         <div className="w-16"></div>
       </div>

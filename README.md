@@ -1,0 +1,2 @@
+# logpanel
+desktop logging app

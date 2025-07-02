@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import LogTable from "@/components/log-table";
 import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
@@ -18,38 +19,20 @@ export default function LogViewer() {
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
   const { toast } = useToast();
 
-  const testConnection = useTestConnection();
   const { data: runs = [] } = useRuns();
   const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
   const clearLogsMutation = useClearLogs();
-
-  // Test Supabase connection on mount
-  useEffect(() => {
-    testConnection.mutate(undefined, {
-      onSuccess: () => {
-        console.log('Successfully connected to Supabase');
-      },
-      onError: (error: any) => {
-        toast({
-          title: "Connection Error",
-          description: `Failed to connect to Supabase: ${error.message}`,
-          variant: "destructive",
-        });
-      },
-    });
-  }, []);
 
   // Set initial run if not selected
   if (!selectedRunId && runs.length > 0) {
     setSelectedRunId(runs[0].run_id);
   }
 
-  const toggleLevel = (level: string) => {
-    setSelectedLevels(prev => 
-      prev.includes(level) 
-        ? prev.filter(l => l !== level)
-        : [...prev, level]
-    );
+  const toggleLevel = (level: string, checked: boolean) => {
+    setSelectedLevels(prev => {
+      const without = prev.filter(l => l !== level);
+      return checked ? [...without, level] : without;
+    });
   };
 
   const handleClearLogs = async () => {
@@ -113,22 +96,20 @@ export default function LogViewer() {
                 className="w-full bg-vscode-bg border-vscode-border font-mono text-sm placeholder:text-vscode-muted focus:border-vscode-accent"
               />
             </div>
-            <div className="flex items-center space-x-2">
-              {['INFO', 'WARN', 'ERROR'].map(level => (
-                <Button
-                  key={level}
-                  size="sm"
-                  variant="outline"
-                  className={`px-2 py-1 text-xs font-semibold ${
-                    selectedLevels.includes(level)
-                      ? `bg-log-${level.toLowerCase()} bg-opacity-20 text-log-${level.toLowerCase()} border-log-${level.toLowerCase()}`
-                      : 'bg-vscode-bg border-vscode-border text-vscode-muted hover:bg-vscode-border hover:bg-opacity-30'
-                  }`}
-                  onClick={() => toggleLevel(level)}
-                >
-                  {level}
-                </Button>
-              ))}
+            <div className="flex items-center space-x-4">
+              {['INFO', 'WARN', 'ERROR'].map(level => {
+                const color = `text-log-${level.toLowerCase()}`;
+                return (
+                  <label key={level} className="flex items-center space-x-1 cursor-pointer select-none">
+                    <Checkbox
+                      checked={selectedLevels.includes(level)}
+                      onCheckedChange={(checked) => toggleLevel(level, !!checked)}
+                      className={`border-vscode-border focus:ring-0 focus:ring-offset-0 data-[state=checked]:bg-${level.toLowerCase()}-500 data-[state=checked]:border-${level.toLowerCase()}-500`}
+                    />
+                    <span className={`${color} text-xs`}>{level}</span>
+                  </label>
+                );
+              })}
             </div>
             <Button
               size="sm"
@@ -148,8 +129,14 @@ export default function LogViewer() {
             </Button>
           </div>
 
-          {/* Log Table */}
-          <LogTable logs={logs} onLogSelect={setSelectedLog} />
+          {/* Log Table or Empty State */}
+          {selectedLevels.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center text-sm text-vscode-muted select-none">
+              No log levels selected. Enable at least one level to display logs.
+            </div>
+          ) : (
+            <LogTable logs={logs} onLogSelect={setSelectedLog} />
+          )}
         </div>
       </div>
 

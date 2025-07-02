@@ -1,0 +1,22 @@
+{
+  "root": true,
+  "plugins": ["import"],
+  "extends": ["eslint:recommended", "plugin:import/typescript"],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "overrides": [
+    {
+      "files": ["packages/ui/**/*.{ts,tsx}"] ,
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": ["@logpanel/service*", "@supabase/*"]
+          }
+        ]
+      }
+    }
+  ]
+} 

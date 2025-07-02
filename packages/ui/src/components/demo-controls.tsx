@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useCreateDemoRun } from "@/hooks/use-supabase-logs";
+import { useCreateDemoRun } from "@/hooks/use-contract-logs";
 
 export default function DemoControls() {
   const createDemoRun = useCreateDemoRun();

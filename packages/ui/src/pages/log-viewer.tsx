@@ -7,7 +7,7 @@ import RunSelector from "@/components/run-selector";
 import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
-import { useRuns, useLogs, useClearLogs, useTestConnection } from "@/hooks/use-supabase-logs";
+import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
 

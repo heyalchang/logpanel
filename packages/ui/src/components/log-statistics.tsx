@@ -1,5 +1,5 @@
 import { formatTime, formatDuration } from "@/lib/utils";
-import { useRunStatistics } from "@/hooks/use-supabase-logs";
+import { useRunStatistics } from "@/hooks/use-contract-logs";
 
 interface LogStatisticsProps {
   runId: string | null;

@@ -7,9 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "vite build",
-    "preview": "vite preview --port 3000",
+    "dev": "npm run dev -w @logpanel/ui",
+    "build": "npm run build --workspaces",
+    "test": "npm run test -w @logpanel/service",
+    "preview": "npm run preview -w @logpanel/ui",
     "start": "vite preview --port 3000",
     "check": "tsc",
     "db:push": "drizzle-kit push",

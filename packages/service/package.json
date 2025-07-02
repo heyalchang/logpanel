@@ -9,12 +9,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "@logpanel/schema": "^1.0.0",
     "@logpanel/contract": "^1.0.0",
+    "@logpanel/schema": "^1.0.0",
     "@supabase/supabase-js": "^2.50.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "ts-jest": "^29.4.0"
   }
-} 
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@logpanel/contract",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@logpanel/schema": "^1.0.0"
+  }
+} 

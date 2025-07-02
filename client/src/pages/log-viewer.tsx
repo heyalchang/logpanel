@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LogTable from "@/components/log-table";
@@ -7,6 +6,7 @@ import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
 import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
+import { useRuns, useLogs, useClearLogs } from "@/hooks/use-supabase-logs";
 import type { Log } from "@shared/schema";
 
 export default function LogViewer() {
@@ -15,35 +15,14 @@ export default function LogViewer() {
   const [selectedLevels, setSelectedLevels] = useState<string[]>(['INFO', 'WARN', 'ERROR']);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
 
-  const { data: runs = [], refetch: refetchRuns } = useQuery({
-    queryKey: ['/api/runs'],
-  });
+  const { data: runs = [] } = useRuns();
+  const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
+  const clearLogsMutation = useClearLogs();
 
   // Set initial run if not selected
   if (!selectedRunId && runs.length > 0) {
     setSelectedRunId(runs[0].run_id);
   }
-
-  const { data: logs = [], refetch: refetchLogs } = useQuery({
-    queryKey: ['/api/logs', selectedRunId, searchQuery, selectedLevels.join(',')],
-    enabled: !!selectedRunId,
-    queryFn: async () => {
-      if (!selectedRunId) return [];
-      const params = new URLSearchParams();
-      if (searchQuery) params.append('query', searchQuery);
-      if (selectedLevels.length > 0) params.append('levels', selectedLevels.join(','));
-      
-      const response = await fetch(`/api/logs/${selectedRunId}?${params}`, {
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch logs');
-      }
-      
-      return response.json();
-    },
-  });
 
   const toggleLevel = (level: string) => {
     setSelectedLevels(prev => 
@@ -55,17 +34,7 @@ export default function LogViewer() {
 
   const handleClearLogs = async () => {
     if (!selectedRunId) return;
-    
-    try {
-      await fetch(`/api/logs/${selectedRunId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      refetchLogs();
-      refetchRuns();
-    } catch (error) {
-      console.error('Failed to clear logs:', error);
-    }
+    clearLogsMutation.mutate(selectedRunId);
   };
 
   const handleExportLogs = () => {
@@ -100,7 +69,7 @@ export default function LogViewer() {
       <div className="flex-1 flex">
         {/* Sidebar */}
         <div className="w-80 bg-vscode-panel border-r border-vscode-border flex flex-col">
-          <DemoControls onRunCreated={() => { refetchRuns(); }} />
+          <DemoControls />
           <RunSelector 
             runs={runs}
             selectedRunId={selectedRunId}

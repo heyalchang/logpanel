@@ -1,35 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { apiRequest } from "@/lib/queryClient";
-import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
+import { useCreateDemoRun } from "@/hooks/use-supabase-logs";
 
-interface DemoControlsProps {
-  onRunCreated: () => void;
-}
-
-export default function DemoControls({ onRunCreated }: DemoControlsProps) {
-  const { toast } = useToast();
-
-  const createDemoRun = useMutation({
-    mutationFn: async (appType: string) => {
-      const response = await apiRequest('POST', `/api/demo/${appType}`);
-      return response.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Demo Run Created",
-        description: `Created ${data.logs.length} logs for run: ${data.run_id}`,
-      });
-      onRunCreated();
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `Failed to create demo run: ${error.message}`,
-        variant: "destructive",
-      });
-    },
-  });
+export default function DemoControls() {
+  const createDemoRun = useCreateDemoRun();
 
   const demoApps = [
     {

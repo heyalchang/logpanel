@@ -1,0 +1,21 @@
+
+> log-electron-viewer@0.1.0 dev
+> vite
+
+
+  VITE v5.4.19  ready in 158 ms
+
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+5:16:38 PM [vite] hmr update /src/App.tsx
+5:16:39 PM [vite] ✨ new dependencies optimized: lucide-react, react-hotkeys-hook, clsx
+5:16:39 PM [vite] ✨ optimized dependencies changed. reloading
+5:17:53 PM [vite] hmr update /src/LiveTab.tsx
+5:17:54 PM [vite] ✨ new dependencies optimized: react-window, date-fns
+5:17:54 PM [vite] ✨ optimized dependencies changed. reloading
+5:18:02 PM [vite] hmr update /src/LiveTab.tsx
+5:18:03 PM [vite] hmr update /src/LiveTab.tsx
+5:18:58 PM [vite] hmr update /src/FilterTab.tsx
+5:19:48 PM [vite] hmr update /src/SettingsTab.tsx
+5:20:13 PM [vite] hmr update /src/index.css

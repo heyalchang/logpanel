@@ -7,6 +7,10 @@ let serverProcess;
 
 // Start the Express server
 function startServer() {
+  // In development we assume a separate Vite dev server is already running
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
   const serverPath = path.join(__dirname, '../server/index.ts');
   
   // Use tsx to run TypeScript directly

@@ -32,6 +32,7 @@ export default function LogViewer() {
   // Load saved log level filters on mount
   useEffect(() => {
     loadSelectedLevels().then((levels) => {
+      console.log('[log-viewer] loaded levels', levels)
       if (levels && Array.isArray(levels) && levels.length > 0) {
         setSelectedLevels(levels)
       }
@@ -40,10 +41,12 @@ export default function LogViewer() {
 
   // Persist log level filters whenever they change
   useEffect(() => {
+    console.log('[log-viewer] persist selectedLevels', selectedLevels)
     saveSelectedLevels(selectedLevels)
   }, [selectedLevels])
 
   const toggleLevel = (level: string, checked: boolean) => {
+    console.log('[log-viewer] toggle', level, checked)
     setSelectedLevels(prev => {
       const without = prev.filter(l => l !== level);
       return checked ? [...without, level] : without;

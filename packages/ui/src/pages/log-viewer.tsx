@@ -10,6 +10,7 @@ import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
 import { useToast } from "@/hooks/use-toast";
+import { loadSelectedLevels, saveSelectedLevels } from "@/lib/preferences";
 import type { Log } from "@shared/schema";
 
 export default function LogViewer() {
@@ -27,6 +28,20 @@ export default function LogViewer() {
   if (!selectedRunId && runs.length > 0) {
     setSelectedRunId(runs[0].run_id);
   }
+
+  // Load saved log level filters on mount
+  useEffect(() => {
+    loadSelectedLevels().then((levels) => {
+      if (levels && Array.isArray(levels) && levels.length > 0) {
+        setSelectedLevels(levels)
+      }
+    })
+  }, [])
+
+  // Persist log level filters whenever they change
+  useEffect(() => {
+    saveSelectedLevels(selectedLevels)
+  }, [selectedLevels])
 
   const toggleLevel = (level: string, checked: boolean) => {
     setSelectedLevels(prev => {

@@ -3,12 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import LogTable from "@/components/log-table";
 import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
@@ -16,7 +15,7 @@ import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
-import { useExportLogs, type ExportFormat } from "@/hooks/use-export-logs";
+import { useExportLogs } from "@/hooks/use-export-logs";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
 
@@ -25,7 +24,6 @@ export default function LogViewer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevels, setSelectedLevels] = useState<string[]>(['INFO', 'WARN', 'ERROR']);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
-  const [exportFormat, setExportFormat] = useState<ExportFormat>('json');
   const { toast } = useToast();
 
   const { data: runs = [] } = useRuns();
@@ -48,10 +46,6 @@ export default function LogViewer() {
   const handleClearLogs = async () => {
     if (!selectedRunId) return;
     clearLogsMutation.mutate(selectedRunId);
-  };
-
-  const handleExportLogs = () => {
-    exportLogs(exportFormat);
   };
 
   return (
@@ -118,23 +112,25 @@ export default function LogViewer() {
             >
               Clear
             </Button>
-            <Select value={exportFormat} onValueChange={(v) => setExportFormat(v as ExportFormat)}>
-              <SelectTrigger className="w-24 bg-vscode-bg border-vscode-border text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="json">JSON</SelectItem>
-                <SelectItem value="txt">Plain Text</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              size="sm"
-              variant="outline"
-              className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
-              onClick={handleExportLogs}
-            >
-              Export
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
+                >
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-36">
+                <DropdownMenuItem onSelect={() => exportLogs('json')}>
+                  JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => exportLogs('txt')}>
+                  Plain Text
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Log Table or Empty State */}

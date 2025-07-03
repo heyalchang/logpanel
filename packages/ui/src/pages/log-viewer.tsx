@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import LogTable from "@/components/log-table";
 import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
@@ -9,6 +16,7 @@ import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
+import { useExportLogs, type ExportFormat } from "@/hooks/use-export-logs";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
 
@@ -17,10 +25,12 @@ export default function LogViewer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevels, setSelectedLevels] = useState<string[]>(['INFO', 'WARN', 'ERROR']);
   const [selectedLog, setSelectedLog] = useState<Log | null>(null);
+  const [exportFormat, setExportFormat] = useState<ExportFormat>('json');
   const { toast } = useToast();
 
   const { data: runs = [] } = useRuns();
   const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
+  const exportLogs = useExportLogs(logs, selectedRunId);
   const clearLogsMutation = useClearLogs();
 
   // Set initial run if not selected
@@ -41,18 +51,7 @@ export default function LogViewer() {
   };
 
   const handleExportLogs = () => {
-    if (!logs.length) return;
-    
-    const jsonData = JSON.stringify(logs, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `logs-${selectedRunId}-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    exportLogs(exportFormat);
   };
 
   return (
@@ -119,6 +118,15 @@ export default function LogViewer() {
             >
               Clear
             </Button>
+            <Select value={exportFormat} onValueChange={(v) => setExportFormat(v as ExportFormat)}>
+              <SelectTrigger className="w-24 bg-vscode-bg border-vscode-border text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="json">JSON</SelectItem>
+                <SelectItem value="txt">Plain Text</SelectItem>
+              </SelectContent>
+            </Select>
             <Button
               size="sm"
               variant="outline"

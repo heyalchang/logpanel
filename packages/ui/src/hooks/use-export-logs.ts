@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 import type { Log } from '@shared/schema';
+import { useToast } from '@/hooks/use-toast';
 
 export type ExportFormat = 'json' | 'txt';
 
 export function useExportLogs(logs: Log[], runId: string | null) {
+  const { toast } = useToast();
   return useCallback(
     (format: ExportFormat) => {
       if (!logs.length || !runId) return;
@@ -32,6 +34,10 @@ export function useExportLogs(logs: Log[], runId: string | null) {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      toast({
+        title: 'Exported Logs',
+        description: `Downloaded ${format.toUpperCase()} file`,
+      });
     },
     [logs, runId]
   );

@@ -66,7 +66,7 @@ These three items are the *only* artefacts that all agents must respect.
 |------|---------------|-------------|
 | **Type Safety** | `tsc --noEmit` | UI or impl imports missing contract symbols |
 | **Version Sync** | `scripts/checkVersions.ts` | `IMPLEMENTATION_VERSION < CONTRACT_VERSION` |
-| **Schema Tests** | Jest + `drizzle-kit` | Migrations fail to apply in fresh DB |
+| **Schema Tests** | Jest | Migrations fail to apply in fresh DB |
 | **Impl Smoke** | Jest | Each `LogService` impl throws or returns wrong shape |
 | **UI Tests** | Storybook/Cypress | Visual or interaction regressions |
 

@@ -9,6 +9,7 @@ import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
+import { useSendWebhook } from "@/hooks/use-webhook";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
 
@@ -22,6 +23,7 @@ export default function LogViewer() {
   const { data: runs = [] } = useRuns();
   const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
   const clearLogsMutation = useClearLogs();
+  const sendWebhookMutation = useSendWebhook();
 
   // Set initial run if not selected
   if (!selectedRunId && runs.length > 0) {
@@ -53,6 +55,11 @@ export default function LogViewer() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleSendWebhook = () => {
+    if (!logs.length) return;
+    sendWebhookMutation.mutate(logs);
   };
 
   return (
@@ -126,6 +133,15 @@ export default function LogViewer() {
               onClick={handleExportLogs}
             >
               Export
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
+              onClick={handleSendWebhook}
+              disabled={sendWebhookMutation.isPending}
+            >
+              Send Webhook
             </Button>
           </div>
 

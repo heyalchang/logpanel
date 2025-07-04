@@ -2,6 +2,12 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import LogTable from "@/components/log-table";
 import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
@@ -9,6 +15,7 @@ import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
+import { useExportLogs } from "@/hooks/use-export-logs";
 import { useSendWebhook } from "@/hooks/use-webhook";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
@@ -22,6 +29,7 @@ export default function LogViewer() {
 
   const { data: runs = [] } = useRuns();
   const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
+  const exportLogs = useExportLogs(logs, selectedRunId);
   const clearLogsMutation = useClearLogs();
   const sendWebhookMutation = useSendWebhook();
 
@@ -42,26 +50,10 @@ export default function LogViewer() {
     clearLogsMutation.mutate(selectedRunId);
   };
 
-  const handleExportLogs = () => {
-    if (!logs.length) return;
-    
-    const jsonData = JSON.stringify(logs, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `logs-${selectedRunId}-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   const handleSendWebhook = () => {
     if (!logs.length) return;
     sendWebhookMutation.mutate(logs);
   };
-
   return (
     <div className="h-screen flex flex-col bg-vscode-bg text-vscode-text overflow-auto">
       {/* Title Bar */}
@@ -130,19 +122,30 @@ export default function LogViewer() {
               size="sm"
               variant="outline"
               className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
-              onClick={handleExportLogs}
-            >
-              Export
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
               onClick={handleSendWebhook}
               disabled={sendWebhookMutation.isPending}
             >
               Send Webhook
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
+                >
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-36">
+                <DropdownMenuItem onSelect={() => exportLogs('json')}>
+                  JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => exportLogs('txt')}>
+                  Plain Text
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Log Table or Empty State */}

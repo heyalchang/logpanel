@@ -63,7 +63,6 @@ This is a full-stack log management application built with React frontend and Ex
 
 ### Production Dependencies
 - **@neondatabase/serverless**: Serverless PostgreSQL client
-- **drizzle-orm**: Type-safe ORM with PostgreSQL dialect
 - **@tanstack/react-query**: Server state management
 - **@radix-ui/***: Accessible UI primitives
 - **express**: Web framework
@@ -80,13 +79,12 @@ This is a full-stack log management application built with React frontend and Ex
 The application uses a unified deployment approach:
 - Single server serves both API and static frontend files
 - Environment-based configuration (development vs production)
-- Database URL provided via environment variables
 - Vite handles frontend bundling, esbuild handles server bundling
 - Suitable for deployment on platforms like Replit, Railway, or traditional VPS
 
 Key deployment considerations:
-- Requires PostgreSQL database (configured for Neon Database)
-- Environment variable `DATABASE_URL` must be set
+- Requires Supabase Postgres database
+- Environment variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` must be set
 - Production build creates optimized bundles for both client and server
 - Session storage requires database connection
 

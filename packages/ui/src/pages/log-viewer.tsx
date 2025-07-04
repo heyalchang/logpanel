@@ -16,6 +16,7 @@ import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
 import { useExportLogs } from "@/hooks/use-export-logs";
+import { useSendWebhook } from "@/hooks/use-webhook";
 import { useToast } from "@/hooks/use-toast";
 import type { Log } from "@shared/schema";
 
@@ -30,6 +31,7 @@ export default function LogViewer() {
   const { data: logs = [] } = useLogs(selectedRunId, searchQuery, selectedLevels);
   const exportLogs = useExportLogs(logs, selectedRunId);
   const clearLogsMutation = useClearLogs();
+  const sendWebhookMutation = useSendWebhook();
 
   // Set initial run if not selected
   if (!selectedRunId && runs.length > 0) {
@@ -48,6 +50,10 @@ export default function LogViewer() {
     clearLogsMutation.mutate(selectedRunId);
   };
 
+  const handleSendWebhook = () => {
+    if (!logs.length) return;
+    sendWebhookMutation.mutate(logs);
+  };
   return (
     <div className="h-screen flex flex-col bg-vscode-bg text-vscode-text overflow-auto">
       {/* Title Bar */}
@@ -111,6 +117,15 @@ export default function LogViewer() {
               onClick={handleClearLogs}
             >
               Clear
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="px-3 py-1.5 bg-vscode-bg border-vscode-border text-xs hover:bg-vscode-border hover:bg-opacity-30"
+              onClick={handleSendWebhook}
+              disabled={sendWebhookMutation.isPending}
+            >
+              Send Webhook
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

@@ -1,0 +1,29 @@
+{
+  "appId": "com.logpanel.app",
+  "productName": "LogPanel",
+  "directories": {
+    "output": "dist-electron"
+  },
+  "files": [
+    "electron/**/*",
+    "packages/ui/dist/**/*",
+    "packages/service/dist/**/*",
+    "packages/contract/dist/**/*",
+    "packages/schema/dist/**/*",
+    "node_modules/**/*"
+  ],
+  "mac": {
+    "category": "public.app-category.developer-tools",
+    "target": ["dmg", "zip"]
+  },
+  "win": {
+    "target": ["nsis", "portable"]
+  },
+  "linux": {
+    "target": ["AppImage", "deb", "rpm"]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}

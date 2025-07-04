@@ -1,6 +1,10 @@
-const { app, BrowserWindow, Menu } = require('electron');
-const path = require('path');
-const { spawn } = require('child_process');
+import { app, BrowserWindow, Menu } from 'electron';
+import path from 'path';
+import { spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let mainWindow;
 let serverProcess;
@@ -31,9 +35,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
-    },
-    icon: path.join(__dirname, '../client/public/favicon.ico')
+      preload: path.join(__dirname, 'preload.cjs')
+    }
   });
 
   // Start with a loading page while server starts
@@ -41,7 +44,11 @@ function createWindow() {
 
   // Wait a bit for server to start, then load the app
   setTimeout(() => {
-    mainWindow.loadURL('http://localhost:3000');
+    if (process.env.NODE_ENV === 'development') {
+      mainWindow.loadURL('http://localhost:5173'); // Vite dev server
+    } else {
+      mainWindow.loadURL('http://localhost:3000');
+    }
   }, 2000);
 
   // Open DevTools in development

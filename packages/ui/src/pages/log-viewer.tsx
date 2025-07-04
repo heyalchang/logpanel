@@ -13,7 +13,6 @@ import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
 import LogStatistics from "@/components/log-statistics";
 import DemoControls from "@/components/demo-controls";
-import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
 import { useExportLogs } from "@/hooks/use-export-logs";
 import { useSendWebhook } from "@/hooks/use-webhook";
@@ -166,8 +165,6 @@ export default function LogViewer() {
         onClose={() => setSelectedLog(null)}
       />
 
-      {/* Floating test data generator */}
-      <FloatingTestPanel />
     </div>
   );
 }

@@ -32,6 +32,13 @@ describe('preferences persistence', () => {
     const result = await loadSelectedLevels()
     expect(result).toBeNull()
   })
+
+  test('falls back when localStorage unsupported', async () => {
+    delete (globalThis as any).localStorage
+    await saveSelectedLevels(['WARN'])
+    const result = await loadSelectedLevels()
+    expect(result).toEqual(['WARN'])
+  })
 })
 
 

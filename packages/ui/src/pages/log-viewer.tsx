@@ -12,7 +12,6 @@ import LogTable from "@/components/log-table";
 import LogDataModal from "@/components/log-data-modal";
 import RunSelector from "@/components/run-selector";
 import LogStatistics from "@/components/log-statistics";
-import DemoControls from "@/components/demo-controls";
 import FloatingTestPanel from "@/components/floating-test-panel";
 import { useRuns, useLogs, useClearLogs } from "@/hooks/use-contract-logs";
 import { useExportLogs } from "@/hooks/use-export-logs";
@@ -73,7 +72,6 @@ export default function LogViewer() {
       <div className="flex-1 flex">
         {/* Sidebar */}
         <div className="w-80 bg-vscode-panel border-r border-vscode-border flex flex-col">
-          <DemoControls />
           <RunSelector 
             runs={runs}
             selectedRunId={selectedRunId}
